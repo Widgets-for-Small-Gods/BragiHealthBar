@@ -2,43 +2,84 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Health Tracker</title>
+  <title>Bragi's Health Tracker</title>
   <style>
-    body { font-family: sans-serif; text-align: center; padding: 20px; }
-    button { padding: 10px 20px; margin: 5px; }
-    #health { font-size: 2em; margin: 20px 0; }
+    body {
+      font-family: sans-serif;
+      text-align: center;
+      padding: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 5px;
+    }
+    #health {
+      font-size: 2em;
+      margin: 20px 0;
+    }
   </style>
 </head>
 <body>
-  <h1>Player Health</h1>
+  <h1>Bragi's Health Tracker</h1>
   <div id="health">Loading...</div>
   <button onclick="updateHealth(-5)">-5</button>
   <button onclick="updateHealth(5)">+5</button>
+  <button onclick="resetHealth()">Reset</button>
 
   <script>
-    const binId = '6804ec778a456b79668d6ed0';
-    const apiKey = '$2a$10$8TH7O/Zi1by5brUwAQ1sHuhni1xdi8MIG/A.mxonUfTPkihZXCCZ.'; // keep this secure if possible
+    const binId = '6804eef68960c979a589342b';
+    const apiKey = '$2a$10$8TH7O/Zi1by5brUwAQ1sHuhni1xdi8MIG/A.mxonUfTPkihZXCCZ.';
     const baseUrl = `https://api.jsonbin.io/v3/b/${binId}`;
     const headers = {
       'X-Master-Key': apiKey,
       'Content-Type': 'application/json'
     };
 
+    let bragiHealth = 0;
+    let bragiMaxHealth = 0;
+
     async function fetchHealth() {
-      const res = await fetch(baseUrl + '/latest', { headers });
-      const data = await res.json();
-      document.getElementById('health').innerText = data.record.health;
+      try {
+        const res = await fetch(`${baseUrl}/latest`, { headers });
+        const data = await res.json();
+        bragiHealth = data.record.bragi_health;
+        bragiMaxHealth = data.record.bragi_max_health;
+        renderHealth();
+      } catch (err) {
+        console.error('Error fetching health:', err);
+        document.getElementById('health').innerText = 'Error loading health.';
+      }
+    }
+
+    function renderHealth() {
+      document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth} HP`;
     }
 
     async function updateHealth(change) {
-      const current = parseInt(document.getElementById('health').innerText);
-      const newHealth = current + change;
-      document.getElementById('health').innerText = newHealth;
+      bragiHealth = Math.max(0, Math.min(bragiHealth + change, bragiMaxHealth));
+      renderHealth();
 
       await fetch(baseUrl, {
         method: 'PUT',
         headers,
-        body: JSON.stringify({ health: newHealth })
+        body: JSON.stringify({
+          bragi_health: bragiHealth,
+          bragi_max_health: bragiMaxHealth
+        })
+      });
+    }
+
+    async function resetHealth() {
+      bragiHealth = bragiMaxHealth;
+      renderHealth();
+
+      await fetch(baseUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({
+          bragi_health: bragiHealth,
+          bragi_max_health: bragiMaxHealth
+        })
       });
     }
 
