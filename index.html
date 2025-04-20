@@ -18,15 +18,15 @@
       position: relative;
       width: 100%;
       max-width: 400px;
-      height: 400px; /* 👈 match this to max-width to make it square */
+      aspect-ratio: 1 / 1; /* square, and now works responsively */
       background-image: url('HealthFrame.png');
-      background-size: 100% 100%; /* stretch to fill */
+      background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: center;
-      
-      font-size: clamp(16px, 1.8vw, 20px);
+      font-size: clamp(14px, 2vw, 20px);
+      overflow: hidden;
     }
-        
+            
     .content {
       position: absolute;
       top: 10%;
