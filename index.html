@@ -26,18 +26,6 @@
       
       /* 👇 This is key — set the scale of all child elements */
       font-size: clamp(12px, 2.5vw, 20px);
-
-      <img id="skull-overlay" src="skull.png" alt="Skull" style="
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 60%;
-        opacity: 0;
-        pointer-events: none;
-        transition: opacity 0.4s ease;
-        z-index: 5;
-      ">
     }
     
     .content {
@@ -122,6 +110,17 @@
           <div id="health-bar" style="height: 100%; background: red; width: 100%; transition: width 0.3s ease;"></div>
         </div>
     </div>
+    <img id="skull-overlay" src="skull.png" alt="Skull" style="
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 60%;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      z-index: 5;
+    ">
   </div>
 
   <script>
