@@ -102,13 +102,13 @@
             </div>
           </div>
         </div>
+        <div class="health-bar-container" style="background: #ddd; overflow: hidden;">
+          <div id="health-bar" style="height: 100%; background: red; width: 100%; transition: width 0.3s ease;"></div>
+        </div>
         <div>
           <button onclick="updateHealth(-1)">-1</button>
           <button onclick="updateHealth(1)">+1</button>
           <button onclick="resetHealth()">Full Health</button>
-        </div>
-        <div class="health-bar-container" style="background: #ddd; overflow: hidden;">
-          <div id="health-bar" style="height: 100%; background: red; width: 100%; transition: width 0.3s ease;"></div>
         </div>
     </div>
     <img id="skull-overlay" src="skull.png" alt="Skull" style="
