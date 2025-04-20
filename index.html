@@ -69,11 +69,16 @@
     <div class="content">
       <h1>Bragi's Health</h1>
       <div id="health">Loading...</div>
-      <div>
-        <button onclick="updateHealth(-5)">-5</button>
-        <button onclick="updateHealth(5)">+5</button>
-        <button onclick="resetHealth()">Reset</button>
-      </div>
+        <div>
+          <button onclick="updateHealth(-5)">-5</button>
+          <button onclick="updateHealth(5)">+5</button>
+          <button onclick="resetHealth()">Reset</button>
+        </div>
+        <div style="margin-top: 10px;">
+          <span style="font-size: 14px;">Max HP:</span>
+          <button class="small-btn" onclick="adjustMaxHealth(-5)">-</button>
+          <button class="small-btn" onclick="adjustMaxHealth(5)">+</button>
+        </div>
     </div>
   </div>
 
