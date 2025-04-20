@@ -18,13 +18,13 @@
       position: relative;
       width: 100%;
       max-width: 400px;
-      aspect-ratio: 1 / 1; /* square, and now works responsively */
       background-image: url('HealthFrame.png');
       background-size: 100% 100%;
       background-repeat: no-repeat;
       background-position: center;
       font-size: clamp(14px, 2vw, 20px);
       overflow: hidden;
+      padding-bottom: 100%; /* This keeps the container square but flexible */
     }
             
     .content {
@@ -40,8 +40,9 @@
       text-align: center;
       font-size: clamp(14px, 1.2vw, 18px);
       color: #222;
+      overflow: auto; /* Allow content to grow if necessary */
     }
-    
+        
     .content h1 {
       font-size: 2em;
       margin-bottom: 0.5em;
