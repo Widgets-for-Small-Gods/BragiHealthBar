@@ -17,12 +17,15 @@
     .frame-container {
       position: relative;
       width: 100%;
-      max-width: 400px; /* optional, keeps it from getting huge */
-      aspect-ratio: 2 / 3; /* maintains shape as it scales */
+      max-width: 400px;
+      aspect-ratio: 2 / 3;
       background-image: url('HealthFrame.png');
       background-size: cover;
       background-repeat: no-repeat;
       background-position: center;
+      
+      /* 👇 This is key — set the scale of all child elements */
+      font-size: clamp(12px, 2.5vw, 20px);
     }
     
     .content {
@@ -39,14 +42,14 @@
       font-size: 1.2vw; /* scales with width of container */
       color: #222;
     }
-
+    
     .content h1 {
-      font-size: clamp(1.2em, 3vw, 2em);
+      font-size: 1.5em;
       margin-bottom: 1em;
     }
     
     #health {
-      font-size: clamp(1.5em, 4vw, 2.2em);
+      font-size: 1.6em;
       margin-bottom: 1em;
     }
 
@@ -62,16 +65,22 @@
     }
 
     .small-btn {
-    background: #222;
-    color: white;
-    border: 1px solid #444;
-    font-size: 1em;
-    padding: 0.5em 1em;
-    margin: 0.3em;
-    cursor: pointer;
-    border-radius: 3px;
+      background: #222;
+      color: white;
+      border: 1px solid #444;
+      font-size: 1em;
+      padding: 0.5em 1em;
+      margin: 0.3em;
+      cursor: pointer;
+      border-radius: 3px;
     }
-  
+    
+  .health-bar-container {
+    height: 1.2em;
+    border-radius: 0.6em;
+    margin-top: 1em;
+  }
+    
   .small-btn:hover {
     background: #444;
   }
@@ -93,10 +102,10 @@
         </div>
         <div style="margin-top: 10px;">
           <span style="font-size: 14px;">Max HP:</span>
-          <button class="small-btn" onclick="adjustMaxHealth(-5)">-</button>
-          <button class="small-btn" onclick="adjustMaxHealth(5)">+</button>
+          <button class="small-btn" onclick="adjustMaxHealth(-2)">-</button>
+          <button class="small-btn" onclick="adjustMaxHealth(2)">+</button>
         </div>
-        <div style="height: 1.2em; background: #ddd; border-radius: 0.6em; overflow: hidden; margin-top: 20px;">
+        <div class="health-bar-container" style="background: #ddd; overflow: hidden;">
           <div id="health-bar" style="height: 100%; background: red; width: 100%; transition: width 0.3s ease;"></div>
         </div>
     </div>
