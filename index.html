@@ -86,10 +86,6 @@
     <div class="content">
       <h1>Bragi's Health</h1>
       <div id="health">Loading...</div>
-        <div style="height: 10px; background: #ccc; border-radius: 5px; overflow: hidden;">
-          <div id="health-bar" style="height: 100%; background: green; width: 100%;"></div>
-        </div>
-
         <div>
           <button onclick="updateHealth(-1)">-1</button>
           <button onclick="updateHealth(1)">+1</button>
@@ -99,6 +95,9 @@
           <span style="font-size: 14px;">Max HP:</span>
           <button class="small-btn" onclick="adjustMaxHealth(-5)">-</button>
           <button class="small-btn" onclick="adjustMaxHealth(5)">+</button>
+        </div>
+        <div style="height: 20px; background: #ddd; border-radius: 6px; overflow: hidden; margin-top: 20px;">
+          <div id="health-bar" style="height: 100%; background: red; width: 100%; transition: width 0.3s ease;"></div>
         </div>
     </div>
   </div>
@@ -130,8 +129,12 @@
 
     function renderHealth() {
       document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth} HP`;
-      const percent = (bragiHealth / bragiMaxHealth) * 100;
-      document.getElementById('health-bar').style.width = percent + '%';
+    
+      const percent = Math.min(100, (bragiHealth / bragiMaxHealth) * 100);
+      const bar = document.getElementById('health-bar');
+    
+      bar.style.width = percent + '%';
+      bar.style.background = 'red'; // always red now
     }
 
     
@@ -178,11 +181,6 @@
   });
 }
     
-    fetchHealth();
-  </script>
-</body>
-</html>
-
     fetchHealth();
   </script>
 </body>
