@@ -18,16 +18,15 @@
       position: relative;
       width: 100%;
       max-width: 400px;
-      aspect-ratio: 2 / 3;
+      height: 400px; /* 👈 match this to max-width to make it square */
       background-image: url('HealthFrame.png');
-      background-size: 100% 100%;
+      background-size: 100% 100%; /* stretch to fill */
       background-repeat: no-repeat;
       background-position: center;
       
-      /* 👇 This is key — set the scale of all child elements */
       font-size: clamp(12px, 2.5vw, 20px);
     }
-    
+        
     .content {
       position: absolute;
       top: 10%;
