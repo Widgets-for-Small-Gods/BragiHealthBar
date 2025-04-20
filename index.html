@@ -86,6 +86,10 @@
     <div class="content">
       <h1>Bragi's Health</h1>
       <div id="health">Loading...</div>
+        <div style="height: 10px; background: #ccc; border-radius: 5px; overflow: hidden;">
+          <div id="health-bar" style="height: 100%; background: green; width: 100%;"></div>
+        </div>
+
         <div>
           <button onclick="updateHealth(-1)">-1</button>
           <button onclick="updateHealth(1)">+1</button>
@@ -126,10 +130,13 @@
 
     function renderHealth() {
       document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth} HP`;
+      const percent = (bragiHealth / bragiMaxHealth) * 100;
+      document.getElementById('health-bar').style.width = percent + '%';
     }
 
+    
     async function updateHealth(change) {
-      bragiHealth = Math.max(0, Math.min(bragiHealth + change, bragiMaxHealth));
+      bragiHealth = Math.max(0, bragiHealth + change);
       renderHealth();
 
       await fetch(baseUrl, {
