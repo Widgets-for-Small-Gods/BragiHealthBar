@@ -26,6 +26,18 @@
       
       /* 👇 This is key — set the scale of all child elements */
       font-size: clamp(12px, 2.5vw, 20px);
+
+      <img id="skull-overlay" src="skull.png" alt="Skull" style="
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60%;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.4s ease;
+        z-index: 5;
+      ">
     }
     
     .content {
@@ -142,9 +154,11 @@
     
       const percent = Math.min(100, (bragiHealth / bragiMaxHealth) * 100);
       const bar = document.getElementById('health-bar');
-    
       bar.style.width = percent + '%';
-      bar.style.background = 'red'; // always red now
+      bar.style.background = 'red';
+    
+      const skull = document.getElementById('skull-overlay');
+      skull.style.opacity = bragiHealth <= 0 ? 1 : 0;
     }
 
     
