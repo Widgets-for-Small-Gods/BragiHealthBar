@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Health Tracker</title>
+  <style>
+    body { font-family: sans-serif; text-align: center; padding: 20px; }
+    button { padding: 10px 20px; margin: 5px; }
+    #health { font-size: 2em; margin: 20px 0; }
+  </style>
+</head>
+<body>
+  <h1>Player Health</h1>
+  <div id="health">Loading...</div>
+  <button onclick="updateHealth(-5)">-5</button>
+  <button onclick="updateHealth(5)">+5</button>
+
+  <script>
+    const binId = '6804ec778a456b79668d6ed0';
+    const apiKey = '$2a$10$8TH7O/Zi1by5brUwAQ1sHuhni1xdi8MIG/A.mxonUfTPkihZXCCZ.'; // keep this secure if possible
+    const baseUrl = `https://api.jsonbin.io/v3/b/${binId}`;
+    const headers = {
+      'X-Master-Key': apiKey,
+      'Content-Type': 'application/json'
+    };
+
+    async function fetchHealth() {
+      const res = await fetch(baseUrl + '/latest', { headers });
+      const data = await res.json();
+      document.getElementById('health').innerText = data.record.health;
+    }
+
+    async function updateHealth(change) {
+      const current = parseInt(document.getElementById('health').innerText);
+      const newHealth = current + change;
+      document.getElementById('health').innerText = newHealth;
+
+      await fetch(baseUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify({ health: newHealth })
+      });
+    }
+
+    fetchHealth();
+  </script>
+</body>
+</html>
