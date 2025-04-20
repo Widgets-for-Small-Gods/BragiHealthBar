@@ -68,7 +68,7 @@
       background: #222;
       color: white;
       border: 1px solid #444;
-      font-size: 1em;
+      font-size: 0.5em;
       padding: 0.5em 1em;
       margin: 0.3em;
       cursor: pointer;
@@ -94,16 +94,17 @@
   <div class="frame-container">
     <div class="content">
       <h1>Health</h1>
-      <div id="health">Loading...</div>
         <div>
           <button onclick="updateHealth(-1)">-1</button>
           <button onclick="updateHealth(1)">+1</button>
           <button onclick="resetHealth()">Full Health</button>
         </div>
-        <div style="margin-top: 1em;">
-          <span style="font-size: 2em;">Max HP:</span>
-          <button class="small-btn" onclick="adjustMaxHealth(-2)">-</button>
-          <button class="small-btn" onclick="adjustMaxHealth(2)">+</button>
+        <div style="display: flex; align-items: center; justify-content: center; gap: 0.5em; margin-bottom: 1em;">
+          <div id="health" style="font-size: 2em;">Loading...</div>
+          <div style="display: flex; flex-direction: column;">
+            <button class="small-btn" onclick="adjustMaxHealth(2)">+</button>
+            <button class="small-btn" onclick="adjustMaxHealth(-2)">−</button>
+          </div>
         </div>
         <div class="health-bar-container" style="background: #ddd; overflow: hidden;">
           <div id="health-bar" style="height: 100%; background: red; width: 100%; transition: width 0.3s ease;"></div>
