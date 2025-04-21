@@ -162,35 +162,44 @@
       skull.style.opacity = bragiHealth <= 0 ? 1 : 0;
     }
 
-    
+        
     async function updateHealth(change) {
       bragiHealth = Math.max(0, bragiHealth + change);
       renderHealth();
-
+    
+      const res = await fetch(`${baseUrl}/latest`, { headers });
+      const data = await res.json();
+      const fullRecord = data.record;
+    
+      fullRecord.bragi_health = bragiHealth;
+      fullRecord.bragi_max_health = bragiMaxHealth;
+    
       await fetch(baseUrl, {
         method: 'PUT',
         headers,
-        body: JSON.stringify({
-          bragi_health: bragiHealth,
-          bragi_max_health: bragiMaxHealth
-        })
+        body: JSON.stringify(fullRecord)
       });
     }
 
     async function resetHealth() {
       bragiHealth = bragiMaxHealth;
       renderHealth();
-
+    
+      const res = await fetch(`${baseUrl}/latest`, { headers });
+      const data = await res.json();
+      const fullRecord = data.record;
+    
+      fullRecord.bragi_health = bragiHealth;
+      fullRecord.bragi_max_health = bragiMaxHealth;
+    
       await fetch(baseUrl, {
         method: 'PUT',
         headers,
-        body: JSON.stringify({
-          bragi_health: bragiHealth,
-          bragi_max_health: bragiMaxHealth
-        })
+        body: JSON.stringify(fullRecord)
       });
     }
 
+    
     async function adjustMaxHealth(change) {
       bragiMaxHealth = Math.max(1, bragiMaxHealth + change);
       bragiHealth = Math.min(bragiHealth, bragiMaxHealth); // clamp current HP if over new max
