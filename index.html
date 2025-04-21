@@ -151,7 +151,7 @@
     }
 
     function renderHealth() {
-      document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth} HP`;
+      document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth}`;
     
       const percent = Math.min(100, (bragiHealth / bragiMaxHealth) * 100);
       const bar = document.getElementById('health-bar');
