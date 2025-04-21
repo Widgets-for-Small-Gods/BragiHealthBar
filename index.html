@@ -192,19 +192,27 @@
     }
 
     async function adjustMaxHealth(change) {
-  bragiMaxHealth = Math.max(1, bragiMaxHealth + change);
-  bragiHealth = Math.min(bragiHealth, bragiMaxHealth); // clamp current HP if over new max
-  renderHealth();
-
-  await fetch(baseUrl, {
-    method: 'PUT',
-    headers,
-    body: JSON.stringify({
-      bragi_health: bragiHealth,
-      bragi_max_health: bragiMaxHealth
-    })
-  });
-}
+      bragiMaxHealth = Math.max(1, bragiMaxHealth + change);
+      bragiHealth = Math.min(bragiHealth, bragiMaxHealth); // clamp current HP if over new max
+  
+      renderHealth();
+  
+        // Fetch existing full data from the bin
+      const res = await fetch(`${baseUrl}/latest`, { headers });
+      const data = await res.json();
+      const fullRecord = data.record;
+    
+      // Update just the level-related values
+      fullRecord.bragi_health = bragiHealth;
+      fullRecord.bragi_max_health: bragiMaxHealth;
+    
+      // Put the updated full record back
+      await fetch(baseUrl, {
+        method: 'PUT',
+        headers,
+        body: JSON.stringify(fullRecord)
+      });
+    }
     
     fetchHealth();
   </script>
