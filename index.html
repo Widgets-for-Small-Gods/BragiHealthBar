@@ -155,18 +155,33 @@
     }
 
     async function saveHealth() {
-      const updated = {
+      const url = 'https://script.google.com/macros/s/AKfycbxqb8T9cEhAO_2cRT26ugvZQjC-jtpslKoU5Y1BLBQatdgNDw0ULqLKse4feQBl6gq3Fg/exec?file=bragi.json';
+    
+      const updatedData = {
         bragi_health: bragiHealth,
         bragi_max_health: bragiMaxHealth
       };
+    
       try {
-        await fetch(`${baseUrl}?file=${playerFile}`, {
+        const response = await fetch(url, {
           method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updated)
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(updatedData)
         });
+    
+        if (!response.ok) {
+          const text = await response.text();
+          console.error('Failed to save health:', text);
+          document.getElementById('health').innerText = 'Save error.';
+        } else {
+          console.log('Health saved successfully');
+        }
+    
       } catch (err) {
-        console.error('Error saving health:', err);
+        console.error('Error during saveHealth():', err);
+        document.getElementById('health').innerText = 'Save error.';
       }
     }
 
