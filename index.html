@@ -126,23 +126,18 @@
   </div>
 
   <script>
-    const binId = '6804eef68960c979a589342b';
-    const apiKey = '$2a$10$8TH7O/Zi1by5brUwAQ1sHuhni1xdi8MIG/A.mxonUfTPkihZXCCZ.';
-    const baseUrl = `https://api.jsonbin.io/v3/b/${binId}`;
-    const headers = {
-      'X-Master-Key': apiKey,
-      'Content-Type': 'application/json'
-    };
+    const baseUrl = 'https://script.google.com/macros/s/AKfycbxqb8T9cEhAO_2cRT26ugvZQjC-jtpslKoU5Y1BLBQatdgNDw0ULqLKse4feQBl6gq3Fg/exec';
+    const playerFile = 'bragi.json';
 
     let bragiHealth = 0;
     let bragiMaxHealth = 0;
 
     async function fetchHealth() {
       try {
-        const res = await fetch(`${baseUrl}/latest`, { headers });
+        const res = await fetch(`${baseUrl}?file=${playerFile}`);
         const data = await res.json();
-        bragiHealth = data.record.bragi_health;
-        bragiMaxHealth = data.record.bragi_max_health;
+        bragiHealth = data.bragi_health;
+        bragiMaxHealth = data.bragi_max_health;
         renderHealth();
       } catch (err) {
         console.error('Error fetching health:', err);
@@ -152,89 +147,60 @@
 
     function renderHealth() {
       document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth}`;
-    
       const percent = Math.min(100, (bragiHealth / bragiMaxHealth) * 100);
       const bar = document.getElementById('health-bar');
       bar.style.width = percent + '%';
-      bar.style.background = 'red';
-    
       const skull = document.getElementById('skull-overlay');
       skull.style.opacity = bragiHealth <= 0 ? 1 : 0;
     }
 
-        
+    async function saveHealth() {
+      const updated = {
+        bragi_health: bragiHealth,
+        bragi_max_health: bragiMaxHealth
+      };
+      try {
+        await fetch(`${baseUrl}?file=${playerFile}`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(updated)
+        });
+      } catch (err) {
+        console.error('Error saving health:', err);
+      }
+    }
+
     async function updateHealth(change) {
       bragiHealth = Math.max(0, bragiHealth + change);
       renderHealth();
-    
-      const res = await fetch(`${baseUrl}/latest`, { headers });
-      const data = await res.json();
-      const fullRecord = data.record;
-    
-      fullRecord.bragi_health = bragiHealth;
-      fullRecord.bragi_max_health = bragiMaxHealth;
-    
-      await fetch(baseUrl, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(fullRecord)
-      });
+      await saveHealth();
     }
 
     async function resetHealth() {
       bragiHealth = bragiMaxHealth;
       renderHealth();
-    
-      const res = await fetch(`${baseUrl}/latest`, { headers });
-      const data = await res.json();
-      const fullRecord = data.record;
-    
-      fullRecord.bragi_health = bragiHealth;
-      fullRecord.bragi_max_health = bragiMaxHealth;
-    
-      await fetch(baseUrl, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(fullRecord)
-      });
+      await saveHealth();
     }
 
-    
     async function adjustMaxHealth(change) {
       bragiMaxHealth = Math.max(1, bragiMaxHealth + change);
-      bragiHealth = Math.min(bragiHealth, bragiMaxHealth); // clamp current HP if over new max
-  
+      bragiHealth = Math.min(bragiHealth, bragiMaxHealth);
       renderHealth();
-  
-        // Fetch existing full data from the bin
-      const res = await fetch(`${baseUrl}/latest`, { headers });
-      const data = await res.json();
-      const fullRecord = data.record;
-    
-      // Update just the level-related values
-      fullRecord.bragi_health = bragiHealth;
-      fullRecord.bragi_max_health = bragiMaxHealth;
-    
-      // Put the updated full record back
-      await fetch(baseUrl, {
-        method: 'PUT',
-        headers,
-        body: JSON.stringify(fullRecord)
-      });
+      await saveHealth();
     }
-    
+
+    // Initial load
     fetchHealth();
 
-    // Always poll every X seconds
+    // Auto refresh every 30s
     setInterval(fetchHealth, 30000);
 
-    // Also fetch immediately when someone returns to the page
+    // Refresh when user returns to the page
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         fetchHealth();
       }
     });
-    
   </script>
 </body>
 </html>
