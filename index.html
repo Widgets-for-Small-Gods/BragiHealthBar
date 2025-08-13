@@ -126,97 +126,105 @@
   </div>
 
   <script>
-    const baseUrl = 'https://script.google.com/macros/s/AKfycbxqb8T9cEhAO_2cRT26ugvZQjC-jtpslKoU5Y1BLBQatdgNDw0ULqLKse4feQBl6gq3Fg/exec';
-    const playerFile = 'bragi.json';
+  const baseUrl = 'https://script.google.com/macros/s/AKfycbxqb8T9cEhAO_2cRT26ugvZQjC-jtpslKoU5Y1BLBQatdgNDw0ULqLKse4feQBl6gq3Fg/exec';
+  const playerFile = 'bragi.json';
+  const token = 'MY_SUPER_SECRET_KEY'; // SAME as in your Google Apps Script
 
-    let bragiHealth = 0;
-    let bragiMaxHealth = 0;
+  let bragiHealth = 0;
+  let bragiMaxHealth = 0;
 
-    async function fetchHealth() {
+  async function fetchHealth() {
+    try {
+      const res = await fetch(`${baseUrl}?file=${playerFile}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const data = await res.json();
+      bragiHealth = data.bragi_health;
+      bragiMaxHealth = data.bragi_max_health;
+      renderHealth();
+    } catch (err) {
+      console.error('Error fetching health:', err);
+      document.getElementById('health').innerText = 'Error loading health.';
+    }
+  }
+
+  function renderHealth() {
+    document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth}`;
+    const percent = Math.min(100, (bragiHealth / bragiMaxHealth) * 100);
+    const bar = document.getElementById('health-bar');
+    bar.style.width = percent + '%';
+    const skull = document.getElementById('skull-overlay');
+    skull.style.opacity = bragiHealth <= 0 ? 1 : 0;
+  }
+
+  async function saveHealth() {
+    const url = `${baseUrl}?file=${playerFile}&token=${token}`;
+
+    const updatedData = {
+      bragi_health: bragiHealth,
+      bragi_max_health: bragiMaxHealth
+    };
+
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(updatedData)
+      });
+
+      const text = await response.text();
+      let parsed;
       try {
-        const res = await fetch(`${baseUrl}?file=${playerFile}`);
-        const data = await res.json();
-        bragiHealth = data.bragi_health;
-        bragiMaxHealth = data.bragi_max_health;
-        renderHealth();
-      } catch (err) {
-        console.error('Error fetching health:', err);
-        document.getElementById('health').innerText = 'Error loading health.';
+        parsed = JSON.parse(text);
+      } catch {
+        parsed = { error: `Invalid JSON from server: ${text}` };
       }
-    }
 
-    function renderHealth() {
-      document.getElementById('health').innerText = `${bragiHealth} / ${bragiMaxHealth}`;
-      const percent = Math.min(100, (bragiHealth / bragiMaxHealth) * 100);
-      const bar = document.getElementById('health-bar');
-      bar.style.width = percent + '%';
-      const skull = document.getElementById('skull-overlay');
-      skull.style.opacity = bragiHealth <= 0 ? 1 : 0;
-    }
-
-    async function saveHealth() {
-      const url = 'https://script.google.com/macros/s/AKfycbxqb8T9cEhAO_2cRT26ugvZQjC-jtpslKoU5Y1BLBQatdgNDw0ULqLKse4feQBl6gq3Fg/exec?file=bragi.json&token=MY_SUPPER_SECRET_KEY';
-    
-      const updatedData = {
-        bragi_health: bragiHealth,
-        bragi_max_health: bragiMaxHealth
-      };
-    
-      try {
-        const response = await fetch(url, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(updatedData)
-        });
-    
-        const responseText = await response.text();
-        console.log('Server response:', responseText);
-    
-        if (!response.ok) {
-          console.error('Failed to save health:', responseText);
-          document.getElementById('health').innerText = 'Save error.';
-        } else {
-          console.log('Health saved successfully');
-        }
-    
-      } catch (err) {
-        console.error('Error during saveHealth():', err);
-        document.getElementById('health').innerText = 'Save error.';
+      if (!response.ok || parsed.error) {
+        console.error('Failed to save health:', parsed.error || text);
+        document.getElementById('health').innerText = `Save error: ${parsed.error || text}`;
+      } else {
+        console.log('Health saved successfully:', parsed);
       }
+
+    } catch (err) {
+      console.error('Error during saveHealth():', err);
+      document.getElementById('health').innerText = `Save error: ${err.message}`;
     }
-    async function updateHealth(change) {
-      bragiHealth = Math.max(0, bragiHealth + change);
-      renderHealth();
-      await saveHealth();
+  }
+
+  async function updateHealth(change) {
+    bragiHealth = Math.max(0, bragiHealth + change);
+    renderHealth();
+    await saveHealth();
+  }
+
+  async function resetHealth() {
+    bragiHealth = bragiMaxHealth;
+    renderHealth();
+    await saveHealth();
+  }
+
+  async function adjustMaxHealth(change) {
+    bragiMaxHealth = Math.max(1, bragiMaxHealth + change);
+    bragiHealth = Math.min(bragiHealth, bragiMaxHealth);
+    renderHealth();
+    await saveHealth();
+  }
+
+  // Initial load
+  fetchHealth();
+
+  // Auto refresh every 30s
+  setInterval(fetchHealth, 30000);
+
+  // Refresh when user returns to the page
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible') {
+      fetchHealth();
     }
-
-    async function resetHealth() {
-      bragiHealth = bragiMaxHealth;
-      renderHealth();
-      await saveHealth();
-    }
-
-    async function adjustMaxHealth(change) {
-      bragiMaxHealth = Math.max(1, bragiMaxHealth + change);
-      bragiHealth = Math.min(bragiHealth, bragiMaxHealth);
-      renderHealth();
-      await saveHealth();
-    }
-
-    // Initial load
-    fetchHealth();
-
-    // Auto refresh every 30s
-    setInterval(fetchHealth, 30000);
-
-    // Refresh when user returns to the page
-    document.addEventListener('visibilitychange', () => {
-      if (document.visibilityState === 'visible') {
-        fetchHealth();
-      }
-    });
-  </script>
+  });
+</script>
 </body>
 </html>
